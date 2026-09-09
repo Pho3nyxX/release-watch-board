@@ -1,18 +1,6 @@
-import express from "express";
-import "dotenv/config";
+import app from "./src/app.js";
+import env from "./src/config/env.js";
 
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-app.use(express.json());
-
-app.get("/api/health", (req, res) => {
-    res.json({
-        status: "ok",
-        message: "Release Watch Board API is running"
-    });
-});
-
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+app.listen(env.port, () => {
+    console.log(`Server running on http://localhost:${env.port}`);
 });
