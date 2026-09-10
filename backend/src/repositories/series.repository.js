@@ -1,35 +1,35 @@
 import pool from "../db/database.js";
 
-export const createMovie = async (title, releaseDate, sourceUrl) => {
+export const createSeries = async (title, sourceUrl) => {
     const result = await pool.query(
         `
-        INSERT INTO movies (title, release_date, source_url)
-        VALUES ($1, $2, $3)
+        INSERT INTO series (title, source_url)
+        VALUES ($1, $2)
         RETURNING *
         `,
-        [title, releaseDate, sourceUrl]
+        [title, sourceUrl]
     );
 
     return result.rows[0];
 };
 
-export const getAllMovies = async () => {
+export const getAllSeries = async () => {
     const result = await pool.query(
         `
         SELECT *
-        FROM movies
-        ORDER BY release_date ASC
+        FROM series
+        ORDER BY title ASC
         `
     );
 
     return result.rows;
 };
 
-export const getMovieById = async (id) => {
+export const getSeriesById = async (id) => {
     const result = await pool.query(
         `
         SELECT *
-        FROM movies
+        FROM series
         WHERE id = $1
         `,
         [id]
@@ -38,28 +38,27 @@ export const getMovieById = async (id) => {
     return result.rows[0];
 };
 
-export const updateMovie = async (id, title, releaseDate, sourceUrl) => {
+export const updateSeries = async (id, title, sourceUrl) => {
     const result = await pool.query(
         `
-        UPDATE movies
+        UPDATE series
         SET
             title = $1,
-            release_date = $2,
-            source_url = $3,
+            source_url = $2,
             updated_at = NOW()
-        WHERE id = $4
+        WHERE id = $3
         RETURNING *
         `,
-        [title, releaseDate, sourceUrl, id]
+        [title, sourceUrl, id]
     );
 
     return result.rows[0];
 };
 
-export const deleteMovie = async (id) => {
+export const deleteSeries = async (id) => {
     const result = await pool.query(
         `
-        DELETE FROM movies
+        DELETE FROM series
         WHERE id = $1
         RETURNING *
         `,
