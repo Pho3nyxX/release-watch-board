@@ -1,3 +1,5 @@
+import { releaseStatuses } from "../config/release-status.js";
+
 export const getReleaseStatus = (releaseDate) => {
     const today = new Date();
     const release = new Date(releaseDate);
@@ -18,4 +20,8 @@ export const getReleaseStatus = (releaseDate) => {
     }
 
     return "upcoming";
+};
+
+export const getReleaseStatusMetadata = (status) => {
+    return releaseStatuses[status];
 };
