@@ -2,10 +2,15 @@ import { releaseStatuses } from "../config/release-status.js";
 
 export const getReleaseStatus = (releaseDate) => {
     const today = new Date();
-    const release = new Date(releaseDate);
 
     today.setHours(0, 0, 0, 0);
-    release.setHours(0, 0, 0, 0);
+
+    const [year, month, day] = releaseDate
+        .slice(0, 10)
+        .split("-")
+        .map(Number);
+
+    const release = new Date(year, month - 1, day);
 
     const differenceInMilliseconds = release - today;
     const differenceInDays =
