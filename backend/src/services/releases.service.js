@@ -14,5 +14,10 @@ export const getUpcomingMoviesService = async (days) => {
 };
 
 export const getUpcomingEpisodesService = async (days) => {
-    return getUpcomingEpisodes(days);
+    const episodes = await getUpcomingEpisodes(days);
+
+    return episodes.map((episode) => ({
+        ...episode,
+        status: getReleaseStatus(episode.release_date)
+    }));
 };
