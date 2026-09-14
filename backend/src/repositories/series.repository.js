@@ -67,3 +67,17 @@ export const deleteSeries = async (id) => {
 
     return result.rows[0];
 };
+
+export const findSeriesBySourceUrl = async (sourceUrl) => {
+    const result = await pool.query(
+        `
+        SELECT *
+        FROM series
+        WHERE source_url = $1
+        LIMIT 1
+        `,
+        [sourceUrl]
+    );
+
+    return result.rows[0] ?? null;
+};

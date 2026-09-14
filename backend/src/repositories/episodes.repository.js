@@ -116,3 +116,21 @@ export const deleteEpisode = async (id) => {
 
     return result.rows[0];
 };
+
+export const findEpisodeBySeasonAndNumber = async (
+    seasonId,
+    episodeNumber
+) => {
+    const result = await pool.query(
+        `
+        SELECT *
+        FROM episodes
+        WHERE season_id = $1
+        AND episode_number = $2
+        LIMIT 1
+        `,
+        [seasonId, episodeNumber]
+    );
+
+    return result.rows[0] ?? null;
+};

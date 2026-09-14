@@ -80,17 +80,28 @@ export const scrapeSeason = async (page, seasonUrl) => {
             })
             .innerText();
 
-        const episodeNumber = episodeInfo.match(
+        const episodeMatch = episodeInfo.match(
             /Episode (\d+)/
-        )[1];
+        );
 
-        const releaseDateText = await page
+        if (!episodeMatch) {
+            continue;
+        }
+
+        const episodeNumber = episodeMatch[1];
+
+        const releaseDateElement = page
             .locator('[data-qa="item-value"]')
             .filter({
                 hasText: /\w+ \d{1,2}, \d{4}/
             })
-            .first()
-            .innerText();
+            .first();
+
+        if (!(await releaseDateElement.count())) {
+            continue;
+        }
+
+        const releaseDateText = await releaseDateElement.innerText();
 
         const releaseDate = normalizeReleaseDate(
             releaseDateText.trim()

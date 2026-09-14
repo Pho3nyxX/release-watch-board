@@ -68,3 +68,17 @@ export const deleteMovie = async (id) => {
 
     return result.rows[0];
 };
+
+export const findMovieBySourceUrl = async (sourceUrl) => {
+    const result = await pool.query(
+        `
+        SELECT *
+        FROM movies
+        WHERE source_url = $1
+        LIMIT 1
+        `,
+        [sourceUrl]
+    );
+
+    return result.rows[0] ?? null;
+};
