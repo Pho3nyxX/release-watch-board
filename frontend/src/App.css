@@ -1,22 +1,183 @@
 .app {
   min-height: 100vh;
+  background-color: #0b0d12;
+  color: #f8fafc;
 }
 
 .app-header {
-  padding: 1.5rem 2rem;
-  border-bottom: 1px solid #ddd;
+  padding: 1.5rem 2.5rem;
+  background-color: #0f1117;
+  border-bottom: 1px solid #1f2430;
 }
 
 .app-header h1 {
   margin: 0;
+  color: #ffffff;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 main {
-  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2.5rem;
 }
 
-main h2 {
-  margin-top: 0;
+.search-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+
+.search-container label {
+  color: #a1a8b5;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.search-container input {
+  width: 100%;
+  max-width: 600px;
+  padding: 0.9rem 1rem;
+  border: 1px solid #272d39;
+  border-radius: 10px;
+  background-color: #151821;
+  color: #ffffff;
+  font-size: 0.95rem;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.search-container input::placeholder {
+  color: #6b7280;
+}
+
+.search-container input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.release-filters,
+.status-filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.release-filters button,
+.status-filters button {
+  padding: 0.6rem 1rem;
+  border: 1px solid #272d39;
+  border-radius: 8px;
+  background-color: #151821;
+  color: #a1a8b5;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.release-filters button:hover,
+.status-filters button:hover {
+  background-color: #1b1f2a;
+  border-color: #363d4b;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.release-filters button.active,
+.status-filters button.active {
+  background-color: #6366f1;
+  color: #ffffff;
+  border-color: #6366f1;
+}
+
+.sort-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+}
+
+.sort-controls label {
+  color: #a1a8b5;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.sort-controls select {
+  padding: 0.6rem 0.85rem;
+  border: 1px solid #272d39;
+  border-radius: 8px;
+  background-color: #151821;
+  color: #d1d5db;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.sort-controls select:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.release-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.release-section {
+  min-width: 0;
+  padding: 1.25rem;
+  border: 1px solid;
+  border-radius: 14px;
+}
+
+.release-section h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 1.25rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.release-section.green {
+  border-color: #14532d;
+  background-color: #0d1712;
+}
+
+.release-section.yellow {
+  border-color: #713f12;
+  background-color: #17140c;
+}
+
+.release-section.red {
+  border-color: #7f1d1d;
+  background-color: #180d0f;
+}
+
+.release-section.green h2 {
+  color: #4ade80;
+}
+
+.release-section.yellow h2 {
+  color: #facc15;
+}
+
+.release-section.red h2 {
+  color: #f87171;
 }
 
 .movie-list {
@@ -25,95 +186,164 @@ main h2 {
 }
 
 .movie-card {
-  padding: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  padding: 1.25rem;
+  background-color: #151821;
+  border: 1px solid #272d39;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.movie-card:hover {
+  transform: translateY(-2px);
+  border-color: #363d4b;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
 .movie-card h3 {
-  margin-top: 0;
+  margin: 0 0 0.75rem;
+  color: #f8fafc;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.release-date {
+  margin: 0;
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+.episode-info {
+  margin: 0 0 0.5rem;
+  color: #9ca3af;
+  font-size: 0.88rem;
+}
+
+.episode-title {
+  margin: 0 0 0.75rem;
+  color: #d1d5db;
+  font-size: 0.92rem;
+  line-height: 1.5;
 }
 
 .status {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   margin-top: 0.75rem;
-  padding: 0.35rem 0.75rem;
+  padding: 0.4rem 0.75rem;
   border-radius: 999px;
-  font-size: 0.875rem;
-  font-weight: bold;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .status.green {
-  background-color: #d1fae5;
-  color: #065f46;
+  background-color: #14532d;
+  color: #86efac;
 }
 
 .status.yellow {
-  background-color: #fef3c7;
-  color: #92400e;
+  background-color: #713f12;
+  color: #fde047;
 }
 
 .status.red {
-  background-color: #fee2e2;
-  color: #991b1b;
+  background-color: #7f1d1d;
+  color: #fca5a5;
 }
 
-.release-section {
-  margin-bottom: 2.5rem;
+.watched-button {
+  display: block;
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid #303642;
+  border-radius: 8px;
+  background-color: #1b1f2a;
+  color: #a1a8b5;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
 }
 
-.release-section h2 {
-  margin-bottom: 1rem;
+.watched-button:hover {
+  background-color: #242936;
+  border-color: #414957;
+  color: #ffffff;
 }
 
-.release-section.green h2 {
-  color: #065f46;
-}
-
-.release-section.yellow h2 {
-  color: #92400e;
-}
-
-.release-section.red h2 {
-  color: #991b1b;
-}
-
-.release-board {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-}
-
-.release-section {
-  padding: 1.25rem;
-  border-radius: 12px;
-}
-
-.release-section.green {
-  background-color: #f0fdf4;
-}
-
-.release-section.yellow {
-  background-color: #fffbeb;
-}
-
-.release-section.red {
-  background-color: #fef2f2;
-}
-
-.release-section h2 {
-  margin-top: 0;
-  margin-bottom: 1rem;
+.watched-button.watched {
+  background-color: #14532d;
+  color: #86efac;
+  border-color: #166534;
 }
 
 .empty-message {
   margin: 0;
-  color: #666;
+  padding: 1rem 0;
+  color: #6b7280;
+  font-size: 0.9rem;
   font-style: italic;
 }
 
-@media (max-width: 900px) {
+/* Tablet */
+@media (max-width: 1000px) {
+  main {
+    padding: 2rem;
+  }
+
   .release-board {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .app-header {
+    padding: 1.25rem;
+  }
+
+  .app-header h1 {
+    font-size: 1.4rem;
+  }
+
+  main {
+    padding: 1.25rem;
+  }
+
+  .release-filters,
+  .status-filters {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .release-filters button,
+  .status-filters button {
+    width: 100%;
+  }
+
+  .sort-controls {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .sort-controls select {
+    width: 100%;
+  }
+
+  .movie-card {
+    padding: 1rem;
+  }
+
+  .release-section {
+    padding: 1rem;
   }
 }

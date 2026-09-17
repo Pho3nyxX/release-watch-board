@@ -19,3 +19,13 @@ export const getMovieReleases = async () => {
 
     return response.json();
 };
+
+export const getEpisodeReleases = async () => {
+    const response = await fetch(`${API_URL}/releases/episodes`);
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch episode releases");
+    }
+
+    return response.json();
+};

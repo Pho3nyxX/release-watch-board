@@ -5,8 +5,12 @@ export const getReleaseStatus = (releaseDate) => {
 
     today.setHours(0, 0, 0, 0);
 
-    const [year, month, day] = releaseDate
-        .slice(0, 10)
+    const releaseDateText =
+        releaseDate instanceof Date
+            ? releaseDate.toISOString().slice(0, 10)
+            : releaseDate.slice(0, 10);
+
+    const [year, month, day] = releaseDateText
         .split("-")
         .map(Number);
 
