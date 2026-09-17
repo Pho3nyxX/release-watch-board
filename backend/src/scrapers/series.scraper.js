@@ -78,6 +78,7 @@ export const scrapeSeason = async (page, seasonUrl) => {
             .filter({
                 hasText: "Episode"
             })
+            .first()
             .innerText();
 
         const episodeMatch = episodeInfo.match(
