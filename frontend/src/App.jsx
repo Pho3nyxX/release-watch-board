@@ -171,6 +171,26 @@ function App() {
 
     const sortedReleases = [...filteredReleases].sort(
         (a, b) => {
+            if (sortOrder === "alphabetical") {
+                const titleA =
+                    a.type === "movie"
+                        ? a.title
+                        : a.series_title;
+
+                const titleB =
+                    b.type === "movie"
+                        ? b.title
+                        : b.series_title;
+
+                return titleA.localeCompare(
+                    titleB,
+                    undefined,
+                    {
+                        sensitivity: "base"
+                    }
+                );
+            }
+
             return sortOrder === "asc"
                 ? new Date(a.release_date) -
                       new Date(b.release_date)
@@ -358,7 +378,7 @@ function App() {
 
                         <div className="sort-controls">
                             <label htmlFor="sort-order">
-                                Sort by release date:
+                                Sort releases:
                             </label>
 
                             <select
@@ -374,6 +394,10 @@ function App() {
 
                                 <option value="desc">
                                     Latest first
+                                </option>
+
+                                <option value="alphabetical">
+                                    Alphabetical (A–Z)
                                 </option>
                             </select>
                         </div>
