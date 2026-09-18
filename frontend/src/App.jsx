@@ -3,16 +3,23 @@ import {
     getMovieReleases,
     getEpisodeReleases
 } from "./api/movies.api.js";
+import {
+    getMovieWatchedStatus,
+    getEpisodeWatchedStatus
+} from "./api/watch-status.api.js";
 import ReleaseSection from "./components/ReleaseSection.jsx";
 import "./App.css";
 
 function App() {
     const [movies, setMovies] = useState([]);
     const [episodes, setEpisodes] = useState([]);
+    const [watchedStatuses, setWatchedStatuses] = useState({});
+    const [watchedDates, setWatchedDates] = useState({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [typeFilter, setTypeFilter] = useState("all");
     const [statusFilter, setStatusFilter] = useState("all");
+    const [watchedFilter, setWatchedFilter] = useState("all");
     const [sortOrder, setSortOrder] = useState("asc");
     const [searchTerm, setSearchTerm] = useState("");
 
@@ -26,6 +33,59 @@ function App() {
 
                 setMovies(movieData);
                 setEpisodes(episodeData);
+
+                const movieStatuses = await Promise.all(
+                    movieData.map(async (movie) => {
+                        const data =
+                            await getMovieWatchedStatus(movie.id);
+
+                        return {
+                            key: `movie-${movie.id}`,
+                            watched: data.watched,
+                            watchedAt:
+                                data.watched_at ??
+                                data.watchedAt ??
+                                null
+                        };
+                    })
+                );
+
+                const episodeStatuses = await Promise.all(
+                    episodeData.map(async (episode) => {
+                        const data =
+                            await getEpisodeWatchedStatus(
+                                episode.id
+                            );
+
+                        return {
+                            key: `series-${episode.id}`,
+                            watched: data.watched,
+                            watchedAt:
+                                data.watched_at ??
+                                data.watchedAt ??
+                                null
+                        };
+                    })
+                );
+
+                const statuses = [
+                    ...movieStatuses,
+                    ...episodeStatuses
+                ].reduce((result, item) => {
+                    result[item.key] = item.watched;
+                    return result;
+                }, {});
+
+                const dates = [
+                    ...movieStatuses,
+                    ...episodeStatuses
+                ].reduce((result, item) => {
+                    result[item.key] = item.watchedAt;
+                    return result;
+                }, {});
+
+                setWatchedStatuses(statuses);
+                setWatchedDates(dates);
             } catch (error) {
                 setError(error.message);
             } finally {
@@ -36,14 +96,38 @@ function App() {
         loadReleases();
     }, []);
 
+    const handleWatchedChange = (
+        key,
+        watched,
+        watchedAt = null
+    ) => {
+        setWatchedStatuses((currentStatuses) => ({
+            ...currentStatuses,
+            [key]: watched
+        }));
+
+        setWatchedDates((currentDates) => ({
+            ...currentDates,
+            [key]: watchedAt
+        }));
+    };
+
     const releases = [
         ...movies.map((movie) => ({
             ...movie,
-            type: "movie"
+            type: "movie",
+            watched:
+                watchedStatuses[`movie-${movie.id}`] ?? false,
+            watchedAt:
+                watchedDates[`movie-${movie.id}`] ?? null
         })),
         ...episodes.map((episode) => ({
             ...episode,
-            type: "series"
+            type: "series",
+            watched:
+                watchedStatuses[`series-${episode.id}`] ?? false,
+            watchedAt:
+                watchedDates[`series-${episode.id}`] ?? null
         }))
     ];
 
@@ -51,6 +135,14 @@ function App() {
         if (
             typeFilter !== "all" &&
             release.type !== typeFilter
+        ) {
+            return false;
+        }
+
+        if (
+            watchedFilter !== "all" &&
+            release.watched !==
+                (watchedFilter === "watched")
         ) {
             return false;
         }
@@ -201,7 +293,9 @@ function App() {
                                         : ""
                                 }
                                 onClick={() =>
-                                    setStatusFilter("releasing_soon")
+                                    setStatusFilter(
+                                        "releasing_soon"
+                                    )
                                 }
                             >
                                 Releasing Soon
@@ -218,6 +312,47 @@ function App() {
                                 }
                             >
                                 Upcoming
+                            </button>
+                        </div>
+
+                        <div className="watched-filters">
+                            <button
+                                className={
+                                    watchedFilter === "all"
+                                        ? "active"
+                                        : ""
+                                }
+                                onClick={() =>
+                                    setWatchedFilter("all")
+                                }
+                            >
+                                All Watch Status
+                            </button>
+
+                            <button
+                                className={
+                                    watchedFilter === "watched"
+                                        ? "active"
+                                        : ""
+                                }
+                                onClick={() =>
+                                    setWatchedFilter("watched")
+                                }
+                            >
+                                Watched
+                            </button>
+
+                            <button
+                                className={
+                                    watchedFilter === "unwatched"
+                                        ? "active"
+                                        : ""
+                                }
+                                onClick={() =>
+                                    setWatchedFilter("unwatched")
+                                }
+                            >
+                                Unwatched
                             </button>
                         </div>
 
@@ -250,6 +385,9 @@ function App() {
                                     title="Released"
                                     releases={releasedReleases}
                                     statusColor="green"
+                                    onWatchedChange={
+                                        handleWatchedChange
+                                    }
                                 />
                             )}
 
@@ -259,6 +397,9 @@ function App() {
                                     title="Releasing Soon"
                                     releases={releasingSoonReleases}
                                     statusColor="yellow"
+                                    onWatchedChange={
+                                        handleWatchedChange
+                                    }
                                 />
                             )}
 
@@ -268,6 +409,9 @@ function App() {
                                     title="Upcoming"
                                     releases={upcomingReleases}
                                     statusColor="red"
+                                    onWatchedChange={
+                                        handleWatchedChange
+                                    }
                                 />
                             )}
                         </div>

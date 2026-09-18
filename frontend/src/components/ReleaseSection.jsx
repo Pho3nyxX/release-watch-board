@@ -1,7 +1,12 @@
 import MovieCard from "./MovieCard.jsx";
 import SeriesCard from "./SeriesCard.jsx";
 
-function ReleaseSection({ title, releases, statusColor }) {
+function ReleaseSection({
+    title,
+    releases,
+    statusColor,
+    onWatchedChange
+}) {
     return (
         <section className={`release-section ${statusColor}`}>
             <h2>
@@ -20,6 +25,9 @@ function ReleaseSection({ title, releases, statusColor }) {
                                 <MovieCard
                                     key={`movie-${release.id}`}
                                     movie={release}
+                                    onWatchedChange={
+                                        onWatchedChange
+                                    }
                                 />
                             );
                         }
@@ -28,6 +36,9 @@ function ReleaseSection({ title, releases, statusColor }) {
                             <SeriesCard
                                 key={`series-${release.id}`}
                                 episode={release}
+                                onWatchedChange={
+                                    onWatchedChange
+                                }
                             />
                         );
                     })}

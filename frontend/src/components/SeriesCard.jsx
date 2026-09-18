@@ -1,8 +1,43 @@
 import { useState } from "react";
-import { formatReleaseDate } from "../utils/date.utils.js";
+import { formatReleaseDate, formatWatchedDate } from "../utils/date.utils.js";
+import {
+    markEpisodeWatched,
+    markEpisodeUnwatched
+} from "../api/watch-status.api.js";
 
-function SeriesCard({ episode }) {
-    const [watched, setWatched] = useState(false);
+function SeriesCard({ episode, onWatchedChange }) {
+    const [watching, setWatching] = useState(false);
+    const [error, setError] = useState(null);
+
+    const handleWatchedToggle = async () => {
+        setWatching(true);
+        setError(null);
+
+        const key = `series-${episode.id}`;
+
+        try {
+            if (episode.watched) {
+                await markEpisodeUnwatched(episode.id);
+
+                onWatchedChange(key, false, null);
+            } else {
+                const data = await markEpisodeWatched(
+                    episode.id
+                );
+
+                const watchedAt =
+                    data.watched_at ??
+                    data.watchedAt ??
+                    null;
+
+                onWatchedChange(key, true, watchedAt);
+            }
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setWatching(false);
+        }
+    };
 
     return (
         <article className="movie-card series-card">
@@ -29,11 +64,31 @@ function SeriesCard({ episode }) {
                 </span>
 
                 <button
-                    className={`watched-button ${watched ? "watched" : ""}`}
-                    onClick={() => setWatched(!watched)}
+                    className={`watched-button ${
+                        episode.watched ? "watched" : ""
+                    }`}
+                    onClick={handleWatchedToggle}
+                    disabled={watching}
                 >
-                    {watched ? "✓ Watched" : "Mark as Watched"}
+                    {watching
+                        ? "Updating..."
+                        : episode.watched
+                          ? "✓ Watched"
+                          : "Mark as Watched"}
                 </button>
+
+                {episode.watched && episode.watchedAt && (
+                    <p className="watched-date">
+                        Watched on{" "}
+                        {formatWatchedDate(episode.watchedAt)}
+                    </p>
+                )}
+
+                {error && (
+                    <p className="watch-error">
+                        {error}
+                    </p>
+                )}
             </div>
         </article>
     );
