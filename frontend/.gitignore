@@ -22,3 +22,23 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+/packages/playwright-core/src/generated
+/packages/playwright-ct-core/src/generated
+e2e/tests/example.spec.js
+e2e/tests-examples/
+
+playwright-report
+test-results
+
+/packages/playwright/README.md
+/packages/playwright-test/README.md
+/packages/playwright-core/api.json
+
+playwright.env
+
+# Playwright
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
