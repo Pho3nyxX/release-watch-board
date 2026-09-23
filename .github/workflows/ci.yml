@@ -1,0 +1,91 @@
+name: Release Watch Board CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: release_watch_board
+        ports:
+          - 5432:5432
+
+        options: >-
+          --health-cmd="pg_isready -U postgres -d release_watch_board"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/release_watch_board
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm ci
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Initialize database schema
+        run: psql "$DATABASE_URL" -f backend/src/db/schema.sql
+
+      - name: Seed CI database
+        run: psql "$DATABASE_URL" -f backend/src/db/ci-seed.sql
+
+      - name: Run backend tests
+        working-directory: backend
+        run: npm test
+
+      - name: Start backend
+        working-directory: backend
+        run: |
+          npm start > backend.log 2>&1 &
+
+          for i in {1..30}; do
+            if curl --fail http://localhost:3000/api/health; then
+              break
+            fi
+
+            sleep 2
+          done
+
+      - name: Install Playwright browsers
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright E2E tests
+        working-directory: frontend
+        run: npm run test:e2e
+
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: frontend/playwright-report/
+          retention-days: 7
