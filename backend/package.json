@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "A web-based movie and TV release tracking application",
   "main": "server.js",
   "scripts": {
     "test": "node --test",
@@ -10,7 +10,7 @@
     "test:status": "node --test src/services/release-status.service.test.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Pho3nyxX",
   "license": "ISC",
   "type": "module",
   "dependencies": {
